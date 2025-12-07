@@ -1,17 +1,19 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <stdexcept>
 using namespace std;
 
-ofstream logfile; // global operator<< can access it
+ofstream logfile; // log output file
 
-// overload << write to screen & log
-void logAndPrint(const string &msg) {
-    cout << msg;
-    logfile << msg;
+// overload << so output goes to console and log
+ostream& operator<<(ostream& out, const string& msg) {
+    out.write(msg.c_str(), msg.size());
+    logfile.write(msg.c_str(), msg.size());
+    return out;
 }
 
-// overload == to compare strings
+// overload == for string comparison
 bool operator==(const string &a, const string &b) {
     return a.compare(b) == 0;
 }
@@ -22,12 +24,12 @@ int main() {
     string line1, line2;
     int lineNum = 1;
 
-    cout << "Enter first file name: ";
-    cin >> file1;
-    cout << "Enter second file name: ";
-    cin >> file2;
+    logfile.open("log.txt");
 
-    logfile.open("log.txt"); // 3rd file
+    cout << string("Enter first file name: ");
+    cin >> file1;
+    cout << string("Enter second file name: ");
+    cin >> file2;
 
     try {
         f1.open(file1);
@@ -37,41 +39,33 @@ int main() {
             throw runtime_error("File failed to open\n");
     }
     catch(const runtime_error &e){
-        cout << e.what();
-        logfile << e.what();
+        cout << string(e.what());
+        logfile.close();
         return 0;
     }
 
-    // line by line comparison
     while (true) {
         bool read1 = static_cast<bool>(getline(f1, line1));
+        bool read2 = static_cast<bool>(getline(f2, line2));
 
-        if (!read1 && !read2) { // both ended
-            logAndPrint("same\n");
-            operator<<(cout, msg);
+        if (!read1 && !read2) {              // both ended
+            cout << string("same\n");
             break;
         }
-
-        if (!read1 && read2) { // file1 ended first
-            logAndPrint(file1 + " is shorter\n");
-            operator<<(cout, msg);
+        if (!read1 && read2) {               // file1 ended first
+            cout << file1 + string(" is shorter\n");
             break;
         }
-
-        if (read1 && !read2) { // file2 ended first
-            logAndPrint(file2 + " is shorter\n");
-            operator<<(cout, msg);
+        if (read1 && !read2) {               // file2 ended first
+            cout << file2 + string(" is shorter\n");
             break;
         }
-
-        if (!(line1 == line2)) { // difference found
-            logAndPrint("Different at line " + to_string(lineNum) + ":\n");
-            operator<<(cout, msg);
-            logAndPrint("File1: " + line1 + "\n");
-            logAndPrint("File2: " + line2 + "\n");
+        if (!(line1 == line2)) {             // lines differ
+            cout << string("Different at line ") + to_string(lineNum) + string(":\n");
+            cout << string("File1: ") + line1 + string("\n");
+            cout << string("File2: ") + line2 + string("\n");
             break;
         }
-
         lineNum++;
     }
 
@@ -80,3 +74,4 @@ int main() {
     logfile.close();
     return 0;
 }
+
