@@ -6,10 +6,9 @@ using namespace std;
 ofstream logfile; // global operator<< can access it
 
 // overload << write to screen & log
-ostream& operator<<(ostream &out, const string &msg) {
-    cout << msg;              // print to console
-    logfile << msg;           // also write to log file
-    return out;
+void logAndPrint(const string &msg) {
+    cout << msg;
+    logfile << msg;
 }
 
 // overload == to compare strings
@@ -45,32 +44,31 @@ int main() {
 
     // line by line comparison
     while (true) {
-        bool read1 = getline(f1, line1);
-        bool read2 = getline(f2, line2);
+        bool read1 = static_cast<bool>(getline(f1, line1));
 
         if (!read1 && !read2) { // both ended
-            string msg = "same\n";
+            logAndPrint("same\n");
             operator<<(cout, msg);
             break;
         }
 
         if (!read1 && read2) { // file1 ended first
-            string msg = file1 + " is shorter\n";
+            logAndPrint(file1 + " is shorter\n");
             operator<<(cout, msg);
             break;
         }
 
         if (read1 && !read2) { // file2 ended first
-            string msg = file2 + " is shorter\n";
+            logAndPrint(file2 + " is shorter\n");
             operator<<(cout, msg);
             break;
         }
 
         if (!(line1 == line2)) { // difference found
-            string msg = "Different at line " + to_string(lineNum) + ":\n";
+            logAndPrint("Different at line " + to_string(lineNum) + ":\n");
             operator<<(cout, msg);
-            operator<<(cout, "File1: " + line1 + "\n");
-            operator<<(cout, "File2: " + line2 + "\n");
+            logAndPrint("File1: " + line1 + "\n");
+            logAndPrint("File2: " + line2 + "\n");
             break;
         }
 
