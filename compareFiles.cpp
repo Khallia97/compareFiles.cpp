@@ -39,7 +39,7 @@ int main() {
             throw runtime_error("File failed to open\n");
     }
     catch(const runtime_error &e){
-        cout << string(e.what());
+        cout << string(e.what());            // use overload so error also goes to log
         logfile.close();
         return 0;
     }
@@ -52,7 +52,7 @@ int main() {
             cout << string("same\n");
             break;
         }
-        if (!read1 && read2) {               // file1 ended first
+        if (!read1 && read2) {          // file1 ended first
             cout << file1 + string(" is shorter\n");
             break;
         }
@@ -60,7 +60,7 @@ int main() {
             cout << file2 + string(" is shorter\n");
             break;
         }
-        if (!(line1 == line2)) {             // lines differ
+        if (!(line1 == line2)) {                 // lines differ
             cout << string("Different at line ") + to_string(lineNum) + string(":\n");
             cout << string("File1: ") + line1 + string("\n");
             cout << string("File2: ") + line2 + string("\n");
