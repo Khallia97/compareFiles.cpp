@@ -6,7 +6,7 @@ using namespace std;
 
 ofstream logfile; // log output file
 
-// overload << so output goes to console and log
+// overload << output goes to console and log
 ostream& operator<<(ostream& out, const string& msg) {
     out.write(msg.c_str(), msg.size());
     logfile.write(msg.c_str(), msg.size());
@@ -39,7 +39,7 @@ int main() {
             throw runtime_error("File failed to open\n");
     }
     catch(const runtime_error &e){
-        cout << string(e.what());            // use overload so error also goes to log
+        cout << string(e.what());            // overload so error also goes to log
         logfile.close();
         return 0;
     }
@@ -69,9 +69,9 @@ int main() {
         lineNum++;
     }
 
-    f1.close();
+    f1.close();                // close
     f2.close();
-    logfile.close();
+    logfile.close();        
     return 0;
 }
 
